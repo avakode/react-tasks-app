@@ -1,0 +1,10 @@
+export const LOGIN = 'LOGIN';
+export const CHANGE_FILTERS = 'CHANGE_FILTERS';
+export const SHOW_MODAL = 'SHOW_MODAL';
+export const HIDE_MODAL = 'HIDE_MODAL';
+export const SHOW_ALERT = 'SHOW_ALERT';
+export const HIDE_ALERT = 'HIDE_ALERT';
+export const SHOW_LOADER = 'SHOW_LOADER';
+export const ADD_TASK = 'ADD_TASK';
+export const EDIT_TASK = 'EDIT_TASK';
+export const FETCH_TASKS = 'FETCH_TASKS';

@@ -1,24 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import { Navbar } from './components/Navbar';
+import { AlertState } from './context/alert/AlertState';
+import { TasksState } from './context/tasks/TasksState';
+import { Main } from './components/Main';
+import { Alert } from './components/Alert';
+import { Modal } from './components/Modal';
+import { ModalState } from './context/modal/ModalState';
+import { LoginState } from './context/login/LoginState';
+import { FiltersState } from './context/filters/FiltersState';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <FiltersState>
+      <LoginState>
+        <TasksState>
+          <AlertState>
+            <ModalState>
+              <Modal />
+              <Navbar />
+              <div className="container pt-4">
+                <Alert />
+                <Main />
+              </div>
+            </ModalState>
+          </AlertState>
+        </TasksState>
+      </LoginState>
+    </FiltersState>
   );
 }
 
