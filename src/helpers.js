@@ -1,8 +1,10 @@
-export const getCookieValue = name =>
-  document.cookie
+export const getCookieValue = name => {
+  return document.cookie && document.cookie.indexOf(name) !== -1 ? document.cookie
     .split('; ')
     .find(row => row.startsWith(name))
-    .split('=')[1];
+    .split('=')[1]
+  : null
+}
 
 export const getStatusLabel = status => {
  if (status === 0)  {
