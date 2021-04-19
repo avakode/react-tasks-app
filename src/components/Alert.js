@@ -1,16 +1,18 @@
-import React, { useContext } from 'react';
-import { AlertContext } from '../context/alert/alertContext';
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { hideAlert } from '../redux/actions';
 
 export const Alert = () => {
-  const { alert, hide } = useContext(AlertContext)
+  const alertState = useSelector(store => store.alert)
+  const dispatch = useDispatch();
 
   return (
     <div
-      className={`alert-container ${!alert.visible && 'is-hidden'}`}
+      className={`alert-container ${!alertState.visible && 'is-hidden'}`}
     >
-      <div className={`alert alert-${alert.type || 'warning'} alert-dismissible`}>
-        <strong>{alert.text}</strong>
-        <button onClick={hide} type="button" className="close" aria-label="Close">
+      <div className={`alert alert-${alertState.type || 'warning'} alert-dismissible`}>
+        <strong>{alertState.text}</strong>
+        <button onClick={() => dispatch(hideAlert())} type="button" className="close" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>

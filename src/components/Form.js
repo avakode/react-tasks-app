@@ -1,44 +1,43 @@
-import React, { useContext, useState } from 'react';
-import { AlertContext } from '../context/alert/alertContext';
-import { TasksContext } from '../context/tasks/tasksContext';
-import { FiltersContext } from '../context/filters/filtersContext';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { API_URL, developer } from '../constants';
+import { showAlert, hideAlert, taskAdded } from '../redux/actions';
 
 export const Form = () => {
+  const dispatch = useDispatch();
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     text: '',
   });
-  const alert = useContext(AlertContext);
-  const tasks = useContext(TasksContext);
-  const filtersData = useContext(FiltersContext);
-  const tasksFilters = {
-    page: filtersData.filters.page,
-    field: filtersData.filters.field,
-    direction: filtersData.filters.direction,
-  }
 
   const submitHandler = event => {
     event.preventDefault();
 
     if (formData.name.trim() && formData.email.trim() && formData.text.trim()) {
-      tasks.addTask(formData.name.trim(), formData.email.trim(), formData.text.trim())
-        .then(() => {
-          alert.show('Task was added', 'success');
+      const form = new FormData();
 
-          tasks.fetchTasks(tasksFilters);
+      form.append('username', formData.name.trim());
+      form.append('email', formData.email.trim());
+      form.append('text', formData.text.trim());
 
-          setTimeout(() => {
-            alert.hide();
-          }, 3000);
-        })
-        .catch(() => {
-          alert.show('Something went wrong', 'danger');
+      axios({
+        method: "post",
+        url: `${API_URL}/create?${developer}`,
+        data: form,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data; charset=utf-8'
+        },
+      }).then(res => {
+        dispatch(showAlert('Task was added', 'success'))
+        dispatch(taskAdded());
+      });
 
-          setTimeout(() => {
-            alert.hide();
-          }, 3000);
-        })
+      setTimeout(() => {
+        dispatch(hideAlert())
+      }, 3000);
 
       setFormData({
         name: '',
@@ -46,26 +45,25 @@ export const Form = () => {
         text: '',
       });
     } else if (!formData.name.trim()) {
-      alert.show('Please enter your name');
+      dispatch(showAlert('Please enter your name'))
 
       setTimeout(() => {
-        alert.hide();
+        dispatch(hideAlert())
       }, 3000);
     } else if (!formData.email.trim()) {
-      alert.show('Please enter your email');
+      dispatch(showAlert('Please enter your email'))
 
       setTimeout(() => {
-        alert.hide();
+        dispatch(hideAlert())
       }, 3000);
     } else {
-      alert.show('Please enter task name');
+      dispatch(showAlert('Please enter task name'))
 
       setTimeout(() => {
-        alert.hide();
+        dispatch(hideAlert())
       }, 3000);
     }
   }
-
   return (
     <form onSubmit={submitHandler}>
       <h2 className="pb-2">Add Task</h2>

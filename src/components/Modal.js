@@ -1,29 +1,22 @@
-import React, { useState, useContext } from 'react';
-import { ModalContext } from '../context/modal/modalContext';
-import { LoginContext } from '../context/login/loginContext';
-import { TasksContext } from '../context/tasks/tasksContext';
-import { FiltersContext } from '../context/filters/filtersContext';
+import React, { useState } from 'react';
 import { CloseIcon } from './icons/CloseIcon';
+import { hideModal, taskEdited } from '../redux/actions';
+import { useDispatch, useSelector } from 'react-redux';
+import { API_URL, developer } from '../constants';
+import axios from 'axios';
 
 export const Modal = () => {
-  const { modal, hide } = useContext(ModalContext);
   const [data, setData] = useState({
     text: '',
   });
-  const login = useContext(LoginContext);
-  const tasks = useContext(TasksContext);
-  const token = login.token;
+  const loginState = useSelector(store => store.login);
+  const modalState = useSelector(store => store.modal);
   const [filled, setFilled] = useState(true);
-  const filtersData = useContext(FiltersContext);
-  const tasksFilters = {
-    page: filtersData.filters.page,
-    field: filtersData.filters.field,
-    direction: filtersData.filters.direction,
-  }
+  const dispatch = useDispatch();
 
   const handleClose = event => {
     event.preventDefault();
-    hide();
+    dispatch(hideModal());
 
     setData({
       text: ''
@@ -39,16 +32,28 @@ export const Modal = () => {
     event.preventDefault();
 
     if (data.text.trim()) {
-      tasks.editTask({
-        id: modal.id,
-        text: data.text,
-        status: modal.status === 0 ? 1 : 11,
-        token,
-      })
-        .then(res => {
-          hide();
-          tasks.fetchTasks(tasksFilters);
-        });
+      const form = new FormData();
+
+      form.append('status', modalState.status === 0 ? 1 : 11);
+
+      if (data.text) {
+        form.append('text', data.text);
+      }
+
+      form.append('token', loginState.token);
+
+      axios({
+        method: "post",
+        url: `${API_URL}/edit/${modalState.id}?${developer}`,
+        data: form,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data'
+        },
+      }).then(res => {
+        dispatch(hideModal());
+        dispatch(taskEdited());
+      });
 
       setData({
         text: '',
@@ -59,7 +64,7 @@ export const Modal = () => {
   }
 
   return (
-    <div className={`popup ${!modal.visible && 'is-hidden'}`}>
+    <div className={`popup ${!modalState.visible && 'is-hidden'}`}>
       <div onClick={handleClose} className="popup__overlay"></div>
       <div className="popup__content">
         <button onClick={handleClose} className="btn popup__close">

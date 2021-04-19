@@ -31,9 +31,13 @@ export const getStatusLabel = status => {
 export const decodeEntities = (text) => {
   const span = document.createElement('span');
 
-  return text
+  if (text) {
+    return text
     .replace(/&[#A-Za-z0-9]+;/gi, (entity, position, text) => {
       span.innerHTML = entity;
       return span.innerText;
-    });
+    })
+  }
+
+  return null
 }

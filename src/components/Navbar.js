@@ -1,17 +1,18 @@
-import React, { useState, useContext } from 'react';
-import { LoginContext } from '../context/login/loginContext';
-import { AlertContext } from '../context/alert/alertContext';
+import axios from 'axios';
+import React, { useState } from 'react';
+import { useDispatch } from 'react-redux';
+import { API_URL, developer } from '../constants';
 import { getCookieValue } from '../helpers';
+import { hideAlert, loginRequest, showAlert } from '../redux/actions';
 
 export const Navbar = () => {
   const [showLogin, setShowLogin] = useState(false);
-  const [logined, setLogined] = useState(getCookieValue('logined') === 'true' ? true : false);
+  const dispatch = useDispatch();
+  const [logined, setLogined] = useState(getCookieValue('logined'));
   const [formData, setFormData] = useState({
     username: '',
     password: '',
   });
-  const login = useContext(LoginContext);
-  const alert = useContext(AlertContext);
 
   const handleShowLogin = event => {
     event.preventDefault();
@@ -23,15 +24,25 @@ export const Navbar = () => {
     event.preventDefault();
 
     if (formData.username.trim() && formData.password.trim()) {
-      login.loginRequest({
-        username: formData.username.trim(),
-        password: formData.password.trim(),
-      })
-      .then((res) => {
+      const form = new FormData();
+
+      form.append('username', formData.username);
+      form.append('password', formData.password);
+
+      axios({
+        method: "post",
+        url: `${API_URL}/login?${developer}`,
+        data: form,
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'multipart/form-data'
+        },
+      }).then(res => {
         if (res.data.status !== 'error') {
-          alert.show('You`re logined', 'success');
+          dispatch(showAlert('You`re logined', 'success'))
           setShowLogin(false);
           setLogined(true);
+          dispatch(loginRequest(res));
 
           const timestamp = new Date().getTime();
           const expires = timestamp + (3600 * 24 * 1000);
@@ -40,39 +51,36 @@ export const Navbar = () => {
           document.cookie = `token=${res.data.message.token}; expires=${expires}`;
 
           setTimeout(() => {
-            alert.hide();
+            dispatch(hideAlert())
           }, 3000);
         } else {
-          alert.show('Wrong username or password', 'danger');
+          dispatch(showAlert('Wrong username or password', 'danger'));
 
           setTimeout(() => {
-            alert.hide();
+            dispatch(hideAlert())
           }, 3000);
         }
-      })
-      .catch(() => {
-        alert.show('Something went wrong', 'danger');
+      });
 
-        setTimeout(() => {
-          alert.hide();
-        }, 3000);
-      })
+      setTimeout(() => {
+        dispatch(hideAlert())
+      }, 3000);
 
       setFormData({
         username: '',
         password: '',
       });
     } else if (!formData.username.trim()) {
-      alert.show('Please enter username');
+      dispatch(showAlert('Please enter username'));
 
       setTimeout(() => {
-        alert.hide();
+        dispatch(hideAlert())
       }, 3000);
     } else {
-      alert.show('Please enter password');
+      dispatch(showAlert('Please enter password'));
 
       setTimeout(() => {
-        alert.hide();
+        dispatch(hideAlert())
       }, 3000);
     }
   }
@@ -80,19 +88,30 @@ export const Navbar = () => {
   const handleLogout = event => {
     event.preventDefault();
 
-    document.cookie = 'logined=false;';
-    document.cookie = 'token=0';
+    document.cookie = 'logined=;';
+    document.cookie = 'token=';
 
-    login.loginRequest({
-      username: '',
-      password: '',
+    const form = new FormData();
+
+    form.append('username', '');
+    form.append('password', '');
+
+    axios({
+      method: "post",
+      url: `${API_URL}/login?${developer}`,
+      data: form,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'multipart/form-data'
+      },
     }).then(res => {
       setShowLogin(true);
       setLogined(false);
+      dispatch(loginRequest(res));
     })
-    .catch(() => {
-      alert.show('Something went wrong', 'danger');
-    })
+      .catch(() => {
+        dispatch(showAlert('Something went wrong', 'danger'));
+      })
   }
 
   return (

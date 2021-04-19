@@ -1,24 +1,15 @@
 import React from 'react';
-import { useContext, useEffect, useState } from 'react';
-import { TasksContext } from '../context/tasks/tasksContext';
-import { FiltersContext } from '../context/filters/filtersContext';
 import { Loader } from './Loader';
 import { Form } from './Form';
 import { Tasks } from './Tasks';
 import { Filters } from './Filters';
+import { useSelector } from 'react-redux';
+import { useTasks } from '../hooks/tasks';
 
 export const Main = () => {
-  const { loading, fetchTasks } = useContext(TasksContext);
-  const filtersData = useContext(FiltersContext);
-  const tasksFilters = {
-    page: filtersData.filters.page,
-    field: filtersData.filters.field,
-    direction: filtersData.filters.direction,
-  }
+  const loading = useSelector(store => store.tasks.loading);
 
-  useEffect(() => {
-    fetchTasks(tasksFilters);
-  }, []);
+  useTasks();
 
   return (
     <>

@@ -1,19 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react';
-import { FiltersContext } from '../context/filters/filtersContext';
-import { TasksContext } from '../context/tasks/tasksContext';
+import React, { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { filtersChange } from '../redux/actions';
 
 export const Filters = () => {
-  const filtersData = useContext(FiltersContext);
-  const tasksRequest = useContext(TasksContext);
-  const [tasksFilters, setTasksFilters] = useState({
-    page: filtersData.filters.page,
-    field: filtersData.filters.field,
-    direction: filtersData.filters.direction,
-  });
-
-  useEffect(() => {
-    filtersData.change(tasksFilters);
-  }, [tasksFilters])
+  const filters = useSelector(store => store.filters);
+  const [tasksFilters, setTasksFilters] = useState(filters);
+  const dispatch = useDispatch();
 
   const radioChange = event => {
     const value = event.target.value === 'asc' || event.target.value === 'desc' ? {
@@ -22,7 +14,7 @@ export const Filters = () => {
       field: event.target.value,
     }
     setTasksFilters({ ...tasksFilters, ...value });
-    tasksRequest.fetchTasks({ ...tasksFilters, ...value });
+    dispatch(filtersChange({ ...tasksFilters, ...value }));
   }
 
   return (
