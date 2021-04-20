@@ -105,3 +105,19 @@ code {
     margin-bottom: 0;
   }
 }
+
+.pagination {
+  li {
+    .page-link {
+      color: #343a40;
+    }
+
+    &.active {
+      .page-link {
+        border-color: #343a40;
+        color: #fff;
+        background-color: #343a40;
+      }
+    }
+  }
+}

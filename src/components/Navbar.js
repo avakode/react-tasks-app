@@ -116,7 +116,7 @@ export const Navbar = () => {
 
   return (
     <>
-      <nav className="navbar navbar-dark navbar-expand-lg bg-primary">
+      <nav className="navbar navbar-dark navbar-expand-lg bg-dark">
         <div className="container d-flex justify-content-between">
           <div className="navbar-brand">
             Tasks App
