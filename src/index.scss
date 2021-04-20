@@ -20,48 +20,21 @@ code {
   }
 }
 
-.note {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 12px 20px;
+.card-container {
+  @media (max-width: 991px) {
+    margin-bottom: 25px;
 
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}
+
+.card {
   &__buttons {
-    @media (max-width: 667px) {
-      display: flex;
-      justify-content: space-between;
-      margin-top: 20px;
-    }
-  }
-
-  &__info {
-    width: calc(100% - 55px);
-
-    @media (max-width: 667px) {
-      width: 100%;
-    }
-  }
-
-  &__topside {
     display: flex;
-    margin-bottom: 12px;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.125);
-    padding-bottom: 12px;
-    font-weight: 500;
-
-    div {
-      margin-right: 3rem;
-      min-width: 25%;
-      padding-right: 1rem;
-
-      @media (max-width: 667px) {
-        margin-right: 0;
-      }
-    }
-
-    @media (max-width: 667px) {
-      display: block;
-    }
+    justify-content: space-between;
+    margin-top: 20px;
   }
 
   .btn {
@@ -75,10 +48,6 @@ code {
     &:first-child {
       margin-bottom: 1rem;
     }
-  }
-
-  @media (max-width: 667px) {
-    display: block;
   }
 }
 

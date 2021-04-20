@@ -79,33 +79,36 @@ export const Tasks = () => {
 
   return (
     <>
-      <ul className="list-group mb-5">
+      <div className="row mb-5">
         {tasksState.tasks.map(taskItem => (
-          <li className="list-group-item note" key={taskItem.id}>
-            <div className="note__info">
-              <div className="note__topside">
-                <div>Name: {taskItem.username}</div>
-                <div>Email: {taskItem.email}</div>
-                <div>Status: {getStatusLabel(taskItem.status)}</div>
+          <div className="card-container col-12 col-lg-4" key={taskItem.id}>
+            <div className="card">
+              <div className="card-body">
+                <div className="card__info">
+                  <div><b>Name:</b> {taskItem.username}</div>
+                  <div><b>Email:</b> {taskItem.email}</div>
+                  <div><b>Status:</b> {getStatusLabel(taskItem.status)}</div>
+                  <hr />
+                  <div>{decodeEntities(taskItem.text)}</div>
+                </div>
+                {loginState.status && <div className="card__buttons">
+                  <button type="button" onClick={e => handleEdit(e, taskItem)} className="btn btn-outline-secondary btn-sm">
+                    <EditIcon />
+                  </button>
+                  {taskItem.status < 10 ?
+                    <button type="button" onClick={e => handleComplete(e, taskItem)} className="btn btn-outline-success btn-sm">
+                      <IncompleteIcon />
+                    </button> :
+                    <button type="button" onClick={e => handleComplete(e, taskItem)} className="btn btn-outline-warning btn-sm">
+                      <CompleteIcon />
+                    </button>
+                  }
+                </div>}
               </div>
-              <div>{decodeEntities(taskItem.text)}</div>
             </div>
-            {loginState.status && <div className="note__buttons">
-              <button type="button" onClick={e => handleEdit(e, taskItem)} className="btn btn-outline-secondary btn-sm">
-                <EditIcon />
-              </button>
-              {taskItem.status < 10 ?
-                <button type="button" onClick={e => handleComplete(e, taskItem)} className="btn btn-outline-success btn-sm">
-                  <IncompleteIcon />
-                </button> :
-                <button type="button" onClick={e => handleComplete(e, taskItem)} className="btn btn-outline-warning btn-sm">
-                  <CompleteIcon />
-                </button>
-              }
-            </div>}
-          </li>
+          </div>
         ))}
-      </ul>
+      </div>
       { tasksState.count > 0 &&
         <div className="d-flex justify-content-center mb-5">
           <nav aria-label="Page navigation example">
