@@ -37,6 +37,14 @@ code {
     margin-top: 20px;
   }
 
+  &__info {
+    div {
+      &:nth-child(3) {
+        min-height: 48px;
+      }
+    }
+  }
+
   .btn {
     display: flex;
     align-items: center;
